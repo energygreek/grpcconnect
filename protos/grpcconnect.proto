@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package grpcconnect;
+
+service ConnectService {
+  rpc Produce (stream Futures) returns (PlatformReply) {}
+  rpc Subcribe (DesireTopic) returns (stream Futures) {}
+}
+
+message Futures {
+  bytes data = 1;
+}
+
+message PlatformReply {
+  string message = 1;
+}
+
+message DesireTopic {
+  string topic = 1;
+}

@@ -2,18 +2,29 @@ syntax = "proto3";
 
 package grpcconnect;
 
+// async
 service ConnectService {
-  rpc Produce (stream Futures) returns (PlatformReply) {}
+  rpc Produce(stream Futures) returns (Reply) {}
   rpc Subscribe(DesireTopic) returns (stream Futures) {}
+}
+
+// sync
+// a->b, c->b
+service ProduceService {
+  rpc Produce(stream Futures) returns (Reply) {}
+  //  rpc Subscribe(DesireTopic) returns (Reply) {}
+}
+
+// b->c
+service BroadcastService {
+  rpc Push(stream Futures) returns (Reply) {}
 }
 
 message Futures {
   bytes data = 1;
 }
 
-message PlatformReply {
-  string message = 1;
-}
+message Reply { string message = 1; }
 
 message DesireTopic {
   string topic = 1;

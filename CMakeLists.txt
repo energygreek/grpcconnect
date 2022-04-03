@@ -15,8 +15,8 @@ include_directories(include)
 find_program(GRPC_CPP_PLUGIN  grpc_cpp_plugin)
 
 set(PROTOS ${CMAKE_CURRENT_SOURCE_DIR}/protos/grpcconnect.proto)
-protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS DESCRIPTORS "grpc connect protobuf" ${PROTOS})
 
+protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS DESCRIPTORS "grpc connect protobuf" ${PROTOS})
 grpc_generate_cpp(GRPC_SRCS GRPC_HDRS ${CMAKE_CURRENT_BINARY_DIR} ${PROTOS})
 
 

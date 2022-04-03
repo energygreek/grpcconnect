@@ -1,4 +1,5 @@
 
+#include "grpcconnect.grpc.pb.h"
 #include <iostream>
 #include <memory>
 #include <string>
@@ -8,15 +9,15 @@
 using grpc::Channel;
 using grpc::ClientContext;
 using grpc::Status;
-using grpcconnect::ConnectService;
 using grpcconnect::Futures;
+using grpcconnect::ProduceService;
 // using grpcconnect::DesireTopic;
 using grpcconnect::Reply;
 
 class Producer {
 public:
   Producer(std::shared_ptr<Channel> channel)
-      : stub_(ConnectService::NewStub(channel)) {}
+      : stub_(ProduceService::NewStub(channel)) {}
 
   std::string SendFuturePrice(const std::string &price) {
     Futures request;
@@ -47,11 +48,11 @@ public:
     }
   }
 
- private:
-  std::unique_ptr<ConnectService::Stub> stub_;
+private:
+  std::unique_ptr<ProduceService::Stub> stub_;
 };
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
   Producer producer(grpc::CreateChannel("localhost:50051",
                                         grpc::InsecureChannelCredentials()));
   std::string future_price("future-100");

@@ -2,7 +2,7 @@
 #include <memory>
 #include <string>
 
-#include <common.hpp>
+#include <Common.hpp>
 
 using grpc::Channel;
 using grpc::ClientContext;
@@ -10,7 +10,7 @@ using grpc::Status;
 using grpcconnect::ConnectService;
 using grpcconnect::Futures;
 using grpcconnect::DesireTopic;
-// using grpcconnect::PlatformReply;
+// using grpcconnect::Reply;
 
 class Consumer {
 public:

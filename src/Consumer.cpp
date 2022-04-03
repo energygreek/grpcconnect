@@ -2,9 +2,7 @@
 #include <memory>
 #include <string>
 
-#include <grpc++/grpc++.h>
-#include <grpcconnect.grpc.pb.h>
-#include <grpcconnect.pb.h>
+#include <common.hpp>
 
 using grpc::Channel;
 using grpc::ClientContext;
@@ -14,30 +12,35 @@ using grpcconnect::Futures;
 using grpcconnect::DesireTopic;
 // using grpcconnect::PlatformReply;
 
-class GreeterClient {
- public:
-  GreeterClient(std::shared_ptr<Channel> channel)
+class Consumer {
+public:
+  Consumer(std::shared_ptr<Channel> channel)
       : stub_(ConnectService::NewStub(channel)) {}
 
-  std::string SayHello(const std::string& user) {
+  void Subscribe(const std::string &user) {
     DesireTopic request;
     request.set_topic(user);
     Futures reply;
     ClientContext context;
 
-    auto reader = stub_->Subcribe(&context, request);
+    context.set_compression_algorithm(
+        grpc_compression_algorithm::GRPC_COMPRESS_STREAM_GZIP);
+    auto reader = stub_->Subscribe(&context, request);
 
     for(;;){
         auto result = reader->Read(&reply);
+        if (result) {
+          std::cout << reply.data() << std::endl;
+        } else {
+          std::cerr << "Consumer read error" << std::endl;
+          break;
+        }
     }
 
     Status status = reader->Finish();
-    if (status.ok()) {
-      return reply.data();
-    } else {
+    if (!status.ok()) {
       std::cout << status.error_code() << ": " << status.error_message()
                 << std::endl;
-      return "RPC failed";
     }
   }
 
@@ -46,10 +49,9 @@ class GreeterClient {
 };
 
 int main(int argc, char** argv) {
-  GreeterClient greeter(grpc::CreateChannel(
-      "localhost:50051", grpc::InsecureChannelCredentials()));
-  std::string user("world");
-  std::string reply = greeter.SayHello(user);
-  std::cout << "Greeter received: " << reply << std::endl;
+  Consumer consumer(grpc::CreateChannel("localhost:50051",
+                                        grpc::InsecureChannelCredentials()));
+  std::string topic("some future");
+  consumer.Subscribe(topic);
   return 0;
 }

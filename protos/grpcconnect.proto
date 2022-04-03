@@ -4,7 +4,7 @@ package grpcconnect;
 
 service ConnectService {
   rpc Produce (stream Futures) returns (PlatformReply) {}
-  rpc Subcribe (DesireTopic) returns (stream Futures) {}
+  rpc Subscribe(DesireTopic) returns (stream Futures) {}
 }
 
 message Futures {

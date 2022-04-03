@@ -9,6 +9,7 @@ find_package(GRPC REQUIRED)
 
 include_directories(${Protobuf_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
+include_directories(include)
 
 
 find_program(GRPC_CPP_PLUGIN  grpc_cpp_plugin)

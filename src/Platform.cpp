@@ -1,12 +1,11 @@
 
 #include <iostream>
 #include <memory>
+#include <queue>
 #include <string>
+#include <vector>
 
-#include <grpc++/grpc++.h>
-
-#include <grpcconnect.grpc.pb.h>
-#include <grpcconnect.pb.h>
+#include <common.hpp>
 
 using grpc::Server;
 using grpc::ServerBuilder;
@@ -19,14 +18,20 @@ using grpcconnect::PlatformReply;
 
 // Logic and data behind the server's behavior.
 class GreeterServiceImpl final : public ConnectService::Service {
+public:
   Status Produce(ServerContext *context, ::grpc::ServerReader<Futures> *reader,
                  PlatformReply *response) override {
     return Status::OK;
   }
-  Status Subcribe(ServerContext *context, const DesireTopic *request,
-                  ::grpc::ServerWriter<Futures> *writer) override {
+  Status Subscribe(ServerContext *context, const DesireTopic *request,
+                   ::grpc::ServerWriter<Futures> *writer) override {
+    context->set_compression_algorithm(
+        grpc_compression_algorithm::GRPC_COMPRESS_STREAM_GZIP);
     return Status::OK;
   }
+
+private:
+  std::queue<Futures> m_message_queue;
 };
 
 void RunServer() {
